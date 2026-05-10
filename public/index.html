@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub | Entrar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container glass-panel">
+        <div class="header">
+            <h1>EventHub</h1>
+            <p>Gerencie seus eventos de forma inteligente.</p>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="login-form" class="active">
+            <h2>Acesse sua conta</h2>
+            <div class="input-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required placeholder="seu@email.com">
+            </div>
+            <div class="input-group">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" required placeholder="••••••••">
+            </div>
+            <div class="error-message" id="login-error"></div>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+            <p class="toggle-text">Ainda não tem conta? <a href="#" id="go-to-register">Registre-se</a></p>
+        </form>
+
+        <!-- Formulário de Cadastro -->
+        <form id="register-form" style="display: none;">
+            <h2>Criar uma conta</h2>
+            <div class="input-group">
+                <label for="register-nome">Nome Completo</label>
+                <input type="text" id="register-nome" required placeholder="João da Silva">
+            </div>
+            <div class="input-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" required placeholder="seu@email.com">
+            </div>
+            <div class="input-group">
+                <label for="register-senha">Senha</label>
+                <input type="password" id="register-senha" required minlength="6" placeholder="Pelo menos 6 caracteres">
+            </div>
+            <div class="error-message" id="register-error"></div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <p class="toggle-text">Já tem uma conta? <a href="#" id="go-to-login">Faça Login</a></p>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

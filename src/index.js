@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const mongoSanitize = require('express-mongo-sanitize');
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Carrega as variáveis de ambiente
 dotenv.config();
@@ -25,10 +26,8 @@ const eventRoutes = require('./routes/eventRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 
-// Rota padrão
-app.get('/', (req, res) => {
-    res.send('API de Gestão de Eventos está rodando!');
-});
+// Rota padrão para servir o Frontend
+app.use(express.static(path.join(__dirname, '../public')));
 
 const PORT = process.env.PORT || 5000;
 
