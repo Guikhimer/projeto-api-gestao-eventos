@@ -7,7 +7,7 @@ const Pedido = {
             SELECT p.*, c.nome AS cliente_nome, c.email AS cliente_email 
             FROM pedidos p 
             LEFT JOIN clientes c ON p.cliente_id = c.id 
-            ORDER BY p.criado_em DESC
+            ORDER BY p.data DESC, p.criado_em DESC
         `;
         const [rows] = await db.query(query);
         return rows;
@@ -30,7 +30,7 @@ const Pedido = {
         const pedido = pedidos[0];
 
         const queryItens = `
-            SELECT ip.*, prod.nome AS produto_nome 
+            SELECT ip.id, ip.pedido_id, ip.produto_id, ip.quantidade, ip.preco_unitario, ip.valor, prod.nome AS produto_nome 
             FROM itens_pedido ip
             JOIN produtos prod ON ip.produto_id = prod.id 
             WHERE ip.pedido_id = ?
@@ -42,7 +42,7 @@ const Pedido = {
     },
 
     // Criar um novo pedido usando TRANSAÇÃO
-    async criarPedido(cliente_id, itens) {
+    async criarPedido(cliente_id, data, itens) {
         const connection = await db.getConnection();
         
         try {
@@ -54,16 +54,26 @@ const Pedido = {
                 throw new Error(`Cliente com ID ${cliente_id} não encontrado`);
             }
 
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(data) || Number.isNaN(Date.parse(`${data}T00:00:00`))) {
+                throw new Error('A data do pedido deve estar no formato YYYY-MM-DD');
+            }
+
             let totalPedido = 0;
             const itensValidados = [];
 
             // 2. Validar produtos, preços e estoque
             for (const item of itens) {
-                const { produto_id, quantidade } = item;
+                const { produto_id, quantidade, valor: valorItem } = item;
 
-                if (!produto_id || !quantidade || quantidade <= 0) {
-                    throw new Error('Cada item deve conter produto_id e quantidade maior que zero');
+                if (!produto_id || !quantidade || quantidade <= 0 || valorItem === undefined) {
+                    throw new Error('Cada item deve conter produto_id, quantidade maior que zero e valor');
                 }
+
+                const valorItemNumerico = Number(valorItem);
+                if (!Number.isFinite(valorItemNumerico) || valorItemNumerico < 0) {
+                    throw new Error('O valor de cada item deve ser um numero maior ou igual a zero');
+                }
+                totalPedido += valorItemNumerico;
 
                 // Buscar produto
                 const [produtos] = await connection.query(
@@ -83,21 +93,20 @@ const Pedido = {
                 }
 
                 const precoUnitario = parseFloat(produto.preco);
-                const subtotal = precoUnitario * quantidade;
-                totalPedido += subtotal;
-
                 itensValidados.push({
                     produto_id,
                     quantidade,
                     preco_unitario: precoUnitario,
+                    valor: valorItemNumerico,
+                    data,
                     novo_estoque: produto.estoque - quantidade
                 });
             }
 
             // 3. Inserir o cabeçalho do pedido
             const [pedidoResult] = await connection.query(
-                'INSERT INTO pedidos (cliente_id, total, status) VALUES (?, ?, ?)',
-                [cliente_id, totalPedido, 'Pendente']
+                'INSERT INTO pedidos (cliente_id, total, data, status) VALUES (?, ?, ?, ?)',
+                [cliente_id, totalPedido, data, 'Pendente']
             );
             const pedidoId = pedidoResult.insertId;
 
@@ -105,8 +114,8 @@ const Pedido = {
             for (const item of itensValidados) {
                 // Inserir item
                 await connection.query(
-                    'INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)',
-                    [pedidoId, item.produto_id, item.quantidade, item.preco_unitario]
+                    'INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, valor, data) VALUES (?, ?, ?, ?, ?, ?)',
+                    [pedidoId, item.produto_id, item.quantidade, item.preco_unitario, item.valor, item.data]
                 );
 
                 // Atualizar estoque do produto

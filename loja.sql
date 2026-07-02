@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT,
     total DECIMAL(10, 2) DEFAULT 0.00,
+    data DATE NOT NULL,
     status VARCHAR(50) DEFAULT 'Pendente',
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
@@ -57,6 +58,8 @@ CREATE TABLE IF NOT EXISTS itens_pedido (
     produto_id INT,
     quantidade INT NOT NULL,
     preco_unitario DECIMAL(10, 2) NOT NULL,
+    valor DECIMAL(10, 2) NOT NULL,
+    data DATE NOT NULL,
     FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
     FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

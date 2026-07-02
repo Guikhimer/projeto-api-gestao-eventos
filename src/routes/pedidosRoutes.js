@@ -60,7 +60,7 @@ router.get('/', listarPedidos);
  * /api/pedidos/{id}:
  *   get:
  *     summary: Obtém detalhes de um pedido por ID
- *     description: Retorna os detalhes de um pedido específico incluindo a lista de itens, quantidades e preços unitários. Exige token JWT e ID de usuário correspondente.
+ *     description: Retorna os detalhes de um pedido específico incluindo total e data do pedido, além da lista de itens, quantidades, preços unitários e valores. Exige token JWT e ID de usuário correspondente.
  *     tags: [Pedidos]
  *     security:
  *       - bearerAuth: []
@@ -100,7 +100,7 @@ router.get('/:id', obterPedido);
  * /api/pedidos:
  *   post:
  *     summary: Cria um novo pedido (Faturamento imediato)
- *     description: Registra um novo pedido para um cliente e realiza a baixa do estoque dos itens. Executa dentro de uma transação SQL atômica. Exige token JWT e ID de usuário correspondente.
+ *     description: Registra um novo pedido com data no pedido e valor em cada item, realizando a baixa do estoque. Executa dentro de uma transação SQL atômica. Exige token JWT e ID de usuário correspondente.
  *     tags: [Pedidos]
  *     security:
  *       - bearerAuth: []

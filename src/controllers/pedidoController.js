@@ -34,16 +34,16 @@ exports.obterPedido = async (req, res) => {
 // @access  Private (Segurança Estrita)
 exports.criarPedido = async (req, res) => {
     try {
-        const { cliente_id, itens } = req.body;
+        const { cliente_id, data, itens } = req.body;
 
-        if (!cliente_id || !itens || !Array.isArray(itens) || itens.length === 0) {
+        if (!cliente_id || !data || !itens || !Array.isArray(itens) || itens.length === 0) {
             return res.status(400).json({ 
                 sucesso: false, 
-                erro: 'Parâmetros inválidos: cliente_id e itens (array não vazio) são obrigatórios' 
+                erro: 'Parametros invalidos: cliente_id, data e itens (array nao vazio) sao obrigatorios' 
             });
         }
 
-        const novoPedidoId = await Pedido.criarPedido(cliente_id, itens);
+        const novoPedidoId = await Pedido.criarPedido(cliente_id, data, itens);
 
         // Buscar dados completos do pedido recém criado
         const pedidoCompleto = await Pedido.buscarPorId(novoPedidoId);

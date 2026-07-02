@@ -117,17 +117,19 @@ const options = {
         // ── Pedidos ───────────────────────────────────────────
         PedidoInputItem: {
           type: 'object',
-          required: ['produto_id', 'quantidade'],
+          required: ['produto_id', 'quantidade', 'valor'],
           properties: {
             produto_id: { type: 'integer', example: 1 },
             quantidade: { type: 'integer', example: 2 },
+            valor: { type: 'number', example: 3999.80 },
           },
         },
         PedidoInput: {
           type: 'object',
-          required: ['cliente_id', 'itens'],
+          required: ['cliente_id', 'data', 'itens'],
           properties: {
             cliente_id: { type: 'integer', example: 1 },
+            data: { type: 'string', format: 'date', example: '2026-07-02' },
             itens: {
               type: 'array',
               items: {
@@ -143,14 +145,33 @@ const options = {
             status: { type: 'string', example: 'Enviado' },
           },
         },
+        PedidoItem: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            pedido_id: { type: 'integer', example: 1 },
+            produto_id: { type: 'integer', example: 1 },
+            produto_nome: { type: 'string', example: 'Smartphone XYZ' },
+            quantidade: { type: 'integer', example: 2 },
+            preco_unitario: { type: 'number', example: 1999.90 },
+            valor: { type: 'number', example: 3999.80 },
+          },
+        },
         Pedido: {
           type: 'object',
           properties: {
             id: { type: 'integer', example: 1 },
             cliente_id: { type: 'integer', example: 1 },
             total: { type: 'number', example: 1999.90 },
+            data: { type: 'string', format: 'date' },
             status: { type: 'string', example: 'Pendente' },
             criado_em: { type: 'string', format: 'date-time' },
+            itens: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/PedidoItem',
+              },
+            },
           },
         },
         // ── Erros ─────────────────────────────────────────────
