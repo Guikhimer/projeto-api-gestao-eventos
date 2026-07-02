@@ -4,10 +4,10 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'EventHub API',
-      version: '1.0.0',
+      title: 'E-Commerce Management API',
+      version: '2.0.0',
       description:
-        'API REST para gerenciamento de eventos com autenticação JWT e banco de dados MongoDB.',
+        'API REST para gerenciamento de e-commerce (Categorias, Produtos, Clientes e Pedidos) utilizando MySQL com segurança estrita.',
     },
     servers: [
       {
@@ -46,36 +46,119 @@ const options = {
         AuthResponse: {
           type: 'object',
           properties: {
+            sucesso: { type: 'boolean', example: true },
             token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
           },
         },
-        // ── Event ─────────────────────────────────────────────
-        EventInput: {
+        // ── Categorias ────────────────────────────────────────
+        CategoriaInput: {
           type: 'object',
-          required: ['titulo', 'descricao', 'data', 'local'],
+          required: ['nome'],
           properties: {
-            titulo:    { type: 'string',  example: 'Workshop de Node.js' },
-            descricao: { type: 'string',  example: 'Aprenda a construir APIs REST do zero.' },
-            data:      { type: 'string',  format: 'date', example: '2025-09-15' },
-            local:     { type: 'string',  example: 'Auditório Principal' },
+            nome: { type: 'string', example: 'Eletrônicos' },
+            descricao: { type: 'string', example: 'Dispositivos eletrônicos e gadgets' },
           },
         },
-        Event: {
+        Categoria: {
           type: 'object',
           properties: {
-            _id:       { type: 'string', example: '665f1a2b3c4d5e6f7a8b9c0d' },
-            titulo:    { type: 'string', example: 'Workshop de Node.js' },
-            descricao: { type: 'string', example: 'Aprenda a construir APIs REST do zero.' },
-            data:      { type: 'string', format: 'date', example: '2025-09-15' },
-            local:     { type: 'string', example: 'Auditório Principal' },
-            criador:   { type: 'string', example: '665f1a2b3c4d5e6f7a8b9c01' },
-            createdAt: { type: 'string', format: 'date-time' },
+            id: { type: 'integer', example: 1 },
+            nome: { type: 'string', example: 'Eletrônicos' },
+            descricao: { type: 'string', example: 'Dispositivos eletrônicos e gadgets' },
+            criado_em: { type: 'string', format: 'date-time' },
           },
         },
+        // ── Produtos ──────────────────────────────────────────
+        ProdutoInput: {
+          type: 'object',
+          required: ['nome', 'preco', 'categoria_id'],
+          properties: {
+            nome: { type: 'string', example: 'Smartphone XYZ' },
+            descricao: { type: 'string', example: 'Smartphone topo de linha' },
+            preco: { type: 'number', example: 1999.90 },
+            estoque: { type: 'integer', example: 50 },
+            categoria_id: { type: 'integer', example: 1 },
+          },
+        },
+        Produto: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            nome: { type: 'string', example: 'Smartphone XYZ' },
+            descricao: { type: 'string', example: 'Smartphone topo de linha' },
+            preco: { type: 'number', example: 1999.90 },
+            estoque: { type: 'integer', example: 50 },
+            categoria_id: { type: 'integer', example: 1 },
+            criado_em: { type: 'string', format: 'date-time' },
+          },
+        },
+        // ── Clientes ──────────────────────────────────────────
+        ClienteInput: {
+          type: 'object',
+          required: ['nome', 'email', 'cpf'],
+          properties: {
+            nome: { type: 'string', example: 'Guilherme Santos' },
+            email: { type: 'string', format: 'email', example: 'guilherme@email.com' },
+            cpf: { type: 'string', example: '123.456.789-00' },
+            telefone: { type: 'string', example: '(11) 98765-4321' },
+          },
+        },
+        Cliente: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            nome: { type: 'string', example: 'Guilherme Santos' },
+            email: { type: 'string', format: 'email', example: 'guilherme@email.com' },
+            cpf: { type: 'string', example: '123.456.789-00' },
+            telefone: { type: 'string', example: '(11) 98765-4321' },
+            criado_em: { type: 'string', format: 'date-time' },
+          },
+        },
+        // ── Pedidos ───────────────────────────────────────────
+        PedidoInputItem: {
+          type: 'object',
+          required: ['produto_id', 'quantidade'],
+          properties: {
+            produto_id: { type: 'integer', example: 1 },
+            quantidade: { type: 'integer', example: 2 },
+          },
+        },
+        PedidoInput: {
+          type: 'object',
+          required: ['cliente_id', 'itens'],
+          properties: {
+            cliente_id: { type: 'integer', example: 1 },
+            itens: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/PedidoInputItem',
+              },
+            },
+          },
+        },
+        PedidoStatusInput: {
+          type: 'object',
+          required: ['status'],
+          properties: {
+            status: { type: 'string', example: 'Enviado' },
+          },
+        },
+        Pedido: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            cliente_id: { type: 'integer', example: 1 },
+            total: { type: 'number', example: 1999.90 },
+            status: { type: 'string', example: 'Pendente' },
+            criado_em: { type: 'string', format: 'date-time' },
+          },
+        },
+        // ── Erros ─────────────────────────────────────────────
         ErrorResponse: {
           type: 'object',
           properties: {
-            message: { type: 'string', example: 'Mensagem de erro descritiva.' },
+            sucesso: { type: 'boolean', example: false },
+            erro: { type: 'string', example: 'Mensagem de erro descritiva.' },
           },
         },
       },

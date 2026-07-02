@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const Usuario = require('../models/usuarioModel');
 
 exports.protect = async (req, res, next) => {
     let token;
@@ -15,7 +15,14 @@ exports.protect = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secreta_padrao');
 
-        req.user = await User.findById(decoded.id);
+        // Buscar usuário no MySQL
+        const user = await Usuario.buscarPorId(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ sucesso: false, erro: 'Não autorizado, usuário inexistente' });
+        }
+
+        req.user = user; // Injeta o usuário autenticado na requisição
 
         next();
     } catch (error) {
