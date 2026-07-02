@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const mongoSanitize = require('express-mongo-sanitize');
 const connectDB = require('./config/db');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 // Carrega as variáveis de ambiente
 dotenv.config();
@@ -17,6 +19,10 @@ app.use(express.json());
 
 // Sanitização de dados (NoSQL Injection protection)
 app.use(mongoSanitize());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  swaggerOptions: { persistAuthorization: true },
+}));
 
 // Arquivos de Rotas
 const authRoutes = require('./routes/authRoutes');
@@ -33,4 +39,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Docs: http://localhost:${PORT}/api-docs`);
 });
