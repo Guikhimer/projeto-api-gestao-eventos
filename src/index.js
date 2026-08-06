@@ -1,10 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
+
+dotenv.config();
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const pool = require('./config/database');
-
-dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 const insecureSecrets = new Set(['', 'sua_chave_secreta_aqui', 'secreta_padrao']);
