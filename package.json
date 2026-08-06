@@ -16,9 +16,7 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^4.22.2",
-    "express-mongo-sanitize": "^2.2.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.6.2",
     "mysql2": "^3.22.5",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"

@@ -9,12 +9,9 @@ const options = {
       description:
         'API REST para gerenciamento de e-commerce (Categorias, Produtos, Clientes e Pedidos) utilizando MySQL com segurança estrita.',
     },
-    servers: [
-      {
-        url: 'http://localhost:5000',
-        description: 'Servidor de Desenvolvimento',
-      },
-    ],
+    servers: process.env.APP_URL
+      ? [{ url: process.env.APP_URL.replace(/\/$/, ''), description: 'Servidor de produção' }]
+      : [{ url: 'http://localhost:5000', description: 'Servidor de desenvolvimento' }],
     components: {
       securitySchemes: {
         bearerAuth: {

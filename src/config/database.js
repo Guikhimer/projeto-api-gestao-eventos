@@ -1,26 +1,22 @@
 const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
 
-dotenv.config();
+const getSslOptions = () => {
+  if (process.env.DB_SSL !== 'true') return undefined;
+
+  const ca = process.env.DB_SSL_CA?.replace(/\\n/g, '\n');
+  return ca ? { ca, rejectUnauthorized: true } : { rejectUnauthorized: false };
+};
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'loja',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  ssl: getSslOptions(),
 });
-
-// Testar conexão inicial
-pool.getConnection()
-    .then(connection => {
-        console.log('MySQL conectado com sucesso ao banco:', process.env.DB_NAME || 'loja');
-        connection.release();
-    })
-    .catch(error => {
-        console.error('Erro de conexão no Pool do MySQL:', error.message);
-    });
 
 module.exports = pool;
