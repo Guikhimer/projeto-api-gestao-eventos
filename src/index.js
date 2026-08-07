@@ -11,13 +11,18 @@ const isProduction = process.env.NODE_ENV === 'production';
 const insecureSecrets = new Set(['', 'sua_chave_secreta_aqui', 'secreta_padrao']);
 const corsOrigin = process.env.CORS_ORIGIN || process.env.APP_URL || process.env.RENDER_EXTERNAL_URL;
 
-if (isProduction && (
-  !process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_NAME ||
-  process.env.DB_SSL !== 'true' || !process.env.DB_SSL_CA ||
-  !corsOrigin || corsOrigin === '*' ||
-  insecureSecrets.has(process.env.JWT_SECRET)
-)) {
-  throw new Error('Em produção, defina credenciais MySQL com TLS, CORS_ORIGIN e um JWT_SECRET forte.');
+const missingProductionConfig = [];
+if (!process.env.DB_HOST) missingProductionConfig.push('DB_HOST');
+if (!process.env.DB_USER) missingProductionConfig.push('DB_USER');
+if (!process.env.DB_PASSWORD) missingProductionConfig.push('DB_PASSWORD');
+if (!process.env.DB_NAME) missingProductionConfig.push('DB_NAME');
+if (process.env.DB_SSL !== 'true') missingProductionConfig.push('DB_SSL=true');
+if (!process.env.DB_SSL_CA) missingProductionConfig.push('DB_SSL_CA');
+if (!corsOrigin || corsOrigin === '*') missingProductionConfig.push('CORS_ORIGIN ou APP_URL');
+if (insecureSecrets.has(process.env.JWT_SECRET)) missingProductionConfig.push('JWT_SECRET forte');
+
+if (isProduction && missingProductionConfig.length) {
+  throw new Error(`Em produção, configure: ${missingProductionConfig.join(', ')}.`);
 }
 
 const app = express();
