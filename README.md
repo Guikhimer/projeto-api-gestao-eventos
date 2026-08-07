@@ -19,11 +19,10 @@ DB_NAME=defaultdb
 DB_SSL=true
 DB_SSL_CA=conteudo_do_certificado_CA_com_quebras_substituidas_por_\\n
 JWT_SECRET=uma-chave-longa-aleatoria-e-secreta
-APP_URL=https://SEU-SERVICO.onrender.com
 CORS_ORIGIN=https://seu-frontend.com
 ```
 
-O serviço recusa iniciar em produção se faltar TLS do banco, uma origem CORS específica ou uma chave JWT segura. O Render disponibiliza HTTPS para a URL pública.
+`APP_URL` é opcional no Render: a API usa automaticamente `RENDER_EXTERNAL_URL`, fornecida pela plataforma, para que o Swagger teste os endpoints de produção. O serviço recusa iniciar em produção se faltar TLS do banco, uma origem CORS específica ou uma chave JWT segura. O Render disponibiliza HTTPS para a URL pública.
 
 ## Homologação
 

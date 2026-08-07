@@ -1,5 +1,7 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 
+const serverUrl = process.env.APP_URL || process.env.RENDER_EXTERNAL_URL;
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -9,8 +11,8 @@ const options = {
       description:
         'API REST para gerenciamento de e-commerce (Categorias, Produtos, Clientes e Pedidos) utilizando MySQL com segurança estrita.',
     },
-    servers: process.env.APP_URL
-      ? [{ url: process.env.APP_URL.replace(/\/$/, ''), description: 'Servidor de produção' }]
+    servers: serverUrl
+      ? [{ url: serverUrl.replace(/\/$/, ''), description: 'Servidor de produção' }]
       : [{ url: 'http://localhost:5000', description: 'Servidor de desenvolvimento' }],
     components: {
       securitySchemes: {

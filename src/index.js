@@ -95,7 +95,7 @@ const startServer = async () => {
     await pool.query('SELECT 1');
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
-      console.log(`Documentação: ${process.env.APP_URL || `http://localhost:${PORT}`}/api-docs`);
+      console.log(`Documentação: ${process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`}/api-docs`);
     });
   } catch (error) {
     console.error(`Erro na conexão com o MySQL: ${error.message}`);
