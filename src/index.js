@@ -9,11 +9,12 @@ const pool = require('./config/database');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const insecureSecrets = new Set(['', 'sua_chave_secreta_aqui', 'secreta_padrao']);
+const corsOrigin = process.env.CORS_ORIGIN || process.env.APP_URL || process.env.RENDER_EXTERNAL_URL;
 
 if (isProduction && (
   !process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_NAME ||
   process.env.DB_SSL !== 'true' || !process.env.DB_SSL_CA ||
-  !process.env.CORS_ORIGIN || process.env.CORS_ORIGIN === '*' ||
+  !corsOrigin || corsOrigin === '*' ||
   insecureSecrets.has(process.env.JWT_SECRET)
 )) {
   throw new Error('Em produção, defina credenciais MySQL com TLS, CORS_ORIGIN e um JWT_SECRET forte.');
@@ -22,7 +23,7 @@ if (isProduction && (
 const app = express();
 app.enable('trust proxy');
 
-const allowedOrigins = (process.env.CORS_ORIGIN || '*')
+const allowedOrigins = (corsOrigin || '*')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);

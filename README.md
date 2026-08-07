@@ -22,7 +22,7 @@ JWT_SECRET=uma-chave-longa-aleatoria-e-secreta
 CORS_ORIGIN=https://seu-frontend.com
 ```
 
-`APP_URL` é opcional no Render: a API usa automaticamente `RENDER_EXTERNAL_URL`, fornecida pela plataforma, para que o Swagger teste os endpoints de produção. O serviço recusa iniciar em produção se faltar TLS do banco, uma origem CORS específica ou uma chave JWT segura. O Render disponibiliza HTTPS para a URL pública.
+`APP_URL` e `CORS_ORIGIN` são opcionais para a primeira publicação no Render: a API usa automaticamente `RENDER_EXTERNAL_URL`, fornecida pela plataforma, tanto para Swagger como para CORS de mesma origem. Ao publicar um front-end separado, cadastre sua URL em `CORS_ORIGIN`. O serviço recusa iniciar em produção se faltar TLS do banco ou uma chave JWT segura. O Render disponibiliza HTTPS para a URL pública.
 
 ## Homologação
 
